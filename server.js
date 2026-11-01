@@ -41,17 +41,21 @@ app.post('/match', async (req, res) => {
   );
   tokenB.addGrant({ roomJoin: true, room: roomId, canPublish: true, canSubscribe: true });
 
+  // AWAIT the JWT strings — this is the fix
+  const jwtA = await tokenA.toJwt();
+  const jwtB = await tokenB.toJwt();
+
   pendingTokens[waiting.userId] = {
     roomId,
     livekitUrl: process.env.LIVEKIT_URL,
-    token: tokenB.toJwt()
+    token: jwtB
   };
 
   res.json({
     status: 'matched',
     roomId,
     livekitUrl: process.env.LIVEKIT_URL,
-    token: tokenA.toJwt()
+    token: jwtA
   });
 });
 
